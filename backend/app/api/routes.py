@@ -28,3 +28,4 @@ async def upload_resume(file: UploadFile = File(...)):
     result = graph.invoke(state)
 
     return result["structured_data"]
+    return {"pdf": result["output_path"]}

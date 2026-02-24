@@ -1,51 +1,174 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body { font-family: Arial; margin: 40px; }
-        h1 { color: #1f4e79; }
-        h2 { color: #1f4e79; border-bottom: 1px solid #ccc; }
-        .section { margin-top: 20px; }
-    </style>
+<meta charset="UTF-8">
+
+<style>
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 40px;
+    color:#000;
+    line-height:1.3;
+}
+
+/* HEADER */
+.name{
+    font-size:30px;
+    font-weight:bold;
+}
+
+.contact{
+    font-size:12px;
+    margin-bottom:12px;
+}
+
+/* SECTION */
+.section-title{
+    font-size:14px;
+    font-weight:bold;
+    margin-top:16px;
+    margin-bottom:4px;
+    text-transform:uppercase;
+    border-bottom:1px solid #000;
+}
+
+/* EXPERIENCE */
+.exp-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.company{
+    font-size:12px;
+    font-style:italic;
+    margin-bottom:2px;
+}
+
+/* LIST */
+ul{
+    margin-top:2px;
+    margin-bottom:6px;
+    padding-left:18px;
+    font-size:12px;
+}
+
+/* INLINE LINE (skills, education, summary) */
+.inline-line{
+    font-size:12px;
+    margin-bottom:3px;
+}
+
+/* SKILL LINE */
+.skill-line{
+    font-size:12px;
+    margin-bottom:3px;
+    line-height:1.3;
+}
+
+/* PROJECT LINE */
+.project-line{
+    font-size:12px;
+    margin-bottom:3px;
+}
+
+/* EDUCATION LINE */
+.education-line{
+    font-size:12px;
+    margin-bottom:3px;
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>{{ name }}</h1>
-<p>{{ email }} | {{ phone }} | {{ location }}</p>
+<!-- HEADER -->
+<div class="name">{{ name }}</div>
+<div class="contact">{{ email }} | {{ phone }} | {{ location }}</div>
 
-<div class="section">
-<h2>Summary</h2>
-<p>{{ summary }}</p>
+<!-- SUMMARY -->
+<div class="section-title">Summary</div>
+<div class="inline-line">{{ summary }}</div>
+
+<!-- EXPERIENCE -->
+<div class="section-title">Experience</div>
+
+{% for exp in experience or [] %}
+
+<div class="exp-row">
+    <div>{{ exp.role }}</div>
+    <div>{{ exp.duration }}</div>
 </div>
 
-<div class="section">
-<h2>Skills</h2>
-<ul>
-{% for skill in skills %}
-<li>{{ skill }}</li>
-{% endfor %}
-</ul>
-</div>
+<div class="company">{{ exp.company }}</div>
 
-<div class="section">
-<h2>Experience</h2>
-{% for exp in experience %}
-<p><b>{{ exp.role }}</b> - {{ exp.company }} ({{ exp.duration }})</p>
+{% if exp.description %}
 <ul>
 {% for d in exp.description %}
 <li>{{ d }}</li>
 {% endfor %}
 </ul>
-{% endfor %}
-</div>
+{% endif %}
 
-<div class="section">
-<h2>Education</h2>
-{% for e in education %}
-<p>{{ e.degree }} - {{ e.institute }} ({{ e.year }})</p>
 {% endfor %}
+
+<!-- ACHIEVEMENTS -->
+{% if achievements %}
+<div class="section-title">Achievements</div>
+<ul>
+{% for a in achievements %}
+<li>{{ a }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<!-- SKILLS -->
+{% if skills %}
+<div class="section-title">Skills</div>
+
+{% for skill in skills %}
+<div class="skill-line">
+<b>{{ skill.category }}:</b>
+{{ skill.items | join(", ") if skill.items is iterable and skill.items is not string else skill.items }}
 </div>
+{% endfor %}
+
+{% endif %}
+
+<!-- CERTIFICATIONS -->
+{% if certifications %}
+<div class="section-title">Licenses & Certifications</div>
+<ul>
+{% for c in certifications %}
+<li>{{ c }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<!-- PROJECTS -->
+{% if projects %}
+<div class="section-title">Projects</div>
+
+{% for p in projects %}
+<div class="project-line">{{ p }}</div>
+{% endfor %}
+
+{% endif %}
+
+<!-- EDUCATION -->
+{% if education %}
+<div class="section-title">Education</div>
+
+{% for e in education %}
+<div class="education-line">
+{{ e.degree }}{% if e.institute %} - {{ e.institute }}{% endif %}{% if e.year %} ({{ e.year }}){% endif %}
+</div>
+{% endfor %}
+
+{% endif %}
 
 </body>
 </html>
