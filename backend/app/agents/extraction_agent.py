@@ -25,20 +25,40 @@ def extraction_agent(state):
     raw_text = state["raw_text"]
 
     prompt = f"""
-    You are a resume parser.
+    You are an expert resume parser.
 
-    Convert this resume text into VALID JSON.
+    Convert the resume into STRICT JSON using EXACT schema below.
 
-    Fields:
-    name, email, phone, location, summary,
-    skills (list),
-    experience (list),
-    education (list)
+    SCHEMA:
+    {{
+        "name": "",
+        "email": "",
+        "phone": "",
+        "location": "",
+        "summary": "",
+        "skills": [],
+        "experience": [
+            {{
+                "company": "",
+                "role": "",
+                "duration": "",
+                "description": []
+            }}
+        ],
+        "education": [
+        {{
+            "degree": "",
+            "institute": "",
+            "year": ""
+        }}
+    ]
+    }}
 
-    IMPORTANT:
+    RULES:
+    - Map Projects → experience
+    - Use project name as role
+    - Extract institute + year from education
     - Return ONLY JSON
-    - Do NOT use markdown
-    - Do NOT wrap in ```json
 
     Resume:
     {raw_text}

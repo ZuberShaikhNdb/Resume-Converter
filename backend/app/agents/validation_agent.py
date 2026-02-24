@@ -35,16 +35,96 @@ def validation_agent(state):
         data[field] = clean(data.get(field))
 
     # ---------- SKILLS ----------
+  # ---------- SKILLS ----------
     skills = data.get("skills", [])
-    cleaned_skills = []
+    flat = []
 
+    # flatten list
     if isinstance(skills, list):
         for s in skills:
-            val = clean(s)
-            if val and len(val) < 40:  # remove noisy long strings
-                cleaned_skills.append(val)
+            if isinstance(s, str):
+                flat.extend([x.strip() for x in s.split(",")])
 
-    data["skills"] = unique_preserve_order(cleaned_skills)
+    flat = unique_preserve_order([x for x in flat if x])
+
+    CATEGORY_MAP = {
+
+        # ---------- LLM / GEN AI ----------
+        "LLM & Generative AI": [
+            "langchain", "pgvector", "gemini", "openai", "rag",
+            "prompt", "llm", "gpt", "transformer", "ragas", "judge", "chatbot"
+        ],
+
+        # ---------- CORE AI ----------
+        "AI/ML Frameworks": [
+            "pytorch", "tensorflow", "scikit", "machine learning", "deep learning"
+        ],
+
+        "NLP & Text Analytics": [
+            "hugging", "bert", "spacy", "nltk", "ner", "text classification"
+        ],
+
+        "Computer Vision": [
+            "opencv", "yolo", "vision", "cnn", "lstm", "object detection"
+        ],
+
+        # ---------- WEB ----------
+        "Frontend": [
+            "react", "angular", "vue", "html", "css", "javascript", "next", "redux"
+        ],
+
+        "Backend & APIs": [
+            "node", "spring", "django", "fastapi", "flask", "express", "api", "backend"
+        ],
+
+        # ---------- DATA ----------
+        "Databases & Data": [
+            "sql", "mysql", "mongo", "postgres", "oracle", "pandas", "numpy", "database"
+        ],
+
+        "Visualization & Analytics": [
+            "power bi", "tableau", "visualization", "analysis", "monitoring"
+        ],
+
+        # ---------- INFRA ----------
+        "Cloud": [
+            "aws", "azure", "gcp", "vertex", "cloud"
+        ],
+
+        "DevOps": [
+            "docker", "kubernetes", "ci", "cd", "jenkins", "terraform"
+        ],
+
+        # ---------- TOOLS ----------
+        "Developer Tools": [
+            "git", "jira", "postman", "vscode", "eclipse", "intellij"
+        ],
+
+        # ---------- SOFT ----------
+        "Soft Skills": [
+            "communication", "leadership", "teamwork", "adaptability", "collaboration"
+        ]
+    }
+
+    categories = {}
+
+    for skill in flat:
+        assigned = False
+        s = skill.lower()
+
+        for cat, keywords in CATEGORY_MAP.items():
+            if any(k in s for k in keywords):
+                categories.setdefault(cat, []).append(skill)
+                assigned = True
+                break
+
+        if not assigned:
+            categories.setdefault("Other", []).append(skill)
+
+    data["skills"] = [
+        {"category": k, "items": v}
+        for k, v in categories.items()
+    ]
 
     # ---------- EXPERIENCE ----------
     exp = data.get("experience", [])
