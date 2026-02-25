@@ -1,8 +1,28 @@
+# -----------------
+# Python (FastAPI)
+# -----------------
 venv/
 __pycache__/
+*.pyc
 .env
-node_modules/
-*.log
+
+# Backend uploads (generated files like PDFs)
+backend/app/uploads/
+
+# -----------------
+# Node / Next.js
+# -----------------
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Build folders
 dist/
 build/
-backend/app/uploads/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

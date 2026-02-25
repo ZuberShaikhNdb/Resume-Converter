@@ -17,7 +17,15 @@ body{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:10px;
+    margin-bottom:12px;
+}
+
+.logo{
+    height:35px;
+}
+
+.header-text{
+    text-align:left;
 }
 
 .name{
@@ -27,9 +35,7 @@ body{
 
 .contact{
     font-size:12px;
-    margin-top:2px;
 }
-
 /* SECTION TITLE */
 .section-title{
     font-size:14px;
@@ -103,11 +109,12 @@ li:before{
 
 <!-- HEADER -->
 <div class="header">
+    <img src="assets/Apexon_Logo.jpg" style="height:35px;">
     <div>
         <div class="name">{{ name }}</div>
         <div class="contact">{{ email }} | {{ phone }} | {{ location }}</div>
     </div>
-    <img src="assets/Apexon_Logo.jpg" style="height:35px;">
+   <!-- <img src="assets/Apexon_Logo.jpg" style="height:35px;"> -->
 </div>
 
 <!-- SUMMARY -->
