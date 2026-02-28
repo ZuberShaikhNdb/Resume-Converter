@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<style>
+@page {
+    margin: 110px 45px 40px 45px;
+}
+
+.fixed-header {
+    position: fixed;
+    top: -90px;
+    left: 0;
+    right: 0;
+    height: 70px;
+}
+
+.logo {
+    height: 35px;
+    float: left;
+}
+
+.header-name {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Running header */
+.page-header {
+    position: running(pageHeader);
+    font-size:14px;
+    font-weight:bold;
+    text-align:center;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 40px 45px;
+    color:#000;
+    line-height:1.3;
+}
+
+/* HEADER */
+.name{
+    font-size:24px;
+    font-weight:bold;
+    margin-bottom:4px;
+}
+
+.contact{
+    font-size:12px;
+    margin-bottom:10px;
+}
+
+/* SECTION TITLE */
+.section-title{
+    font-size:14px;
+    font-weight:bold;
+    margin-top:16px;
+    margin-bottom:6px;
+    color:#000;
+    border-bottom:1px solid #1f4e79;
+    padding-bottom:3px;
+}
+
+/* SUMMARY */
+.summary{
+    font-size:12px;
+    text-align:justify;
+    margin-bottom:8px;
+}
+
+/* EXPERIENCE */
+.exp-block{
+    margin-bottom:10px;
+}
+
+.exp-header{
+    font-size:12px;
+    font-weight:bold;
+    display:flex;
+    justify-content:space-between;
+}
+
+.exp-company{
+    font-style:italic;
+    font-weight:normal;
+}
+
+ul{
+    list-style:none;
+    padding-left:0;
+    margin-top:3px;
+}
+
+li{
+    font-size:12px;
+    margin-bottom:3px;
+    position:relative;
+    padding-left:14px;
+}
+
+li:before{
+    content:"•";
+    position:absolute;
+    left:0;
+    font-size:14px;
+}
+
+/* SKILLS */
+.skills-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:4px;
+    margin-bottom:10px;
+    font-size:12px;
+}
+
+.skills-table td{
+    border:1px solid #000;
+    padding:4px 6px;
+    vertical-align:top;
+}
+
+.skills-left{
+    width:28%;
+    font-weight:normal;
+}
+
+.skills-right{
+    width:72%;
+}
+
+/*CERTIFICATIONS */
+.cert-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:4px;
+    margin-bottom:10px;
+    font-size:12px;
+}
+
+.cert-table td{
+    border:1px solid #000;
+    padding:6px 8px;
+    vertical-align:top;
+}
+
+.cert-list{
+    list-style:none;
+    padding-left:0;
+    margin:0;
+}
+
+.cert-list li{
+    position:relative;
+    padding-left:14px;
+    margin-bottom:4px;
+}
+
+.cert-list li:before{
+    content:"•";
+    position:absolute;
+    left:0;
+}
+/* EDUCATION */
+.education-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:4px;
+    margin-bottom:10px;
+    font-size:12px;
+}
+
+.education-table td{
+    border:1px solid #000;
+    padding:5px 6px;
+    vertical-align:top;
+}
+
+.edu-left{
+    width:70%;
+}
+
+.edu-right{
+    width:30%;
+    text-align:right;
+}
+
+</style>
+</head>
+
+<body>
+<div class="fixed-header">
+    <img src="assets/Apexon_Logo.jpg" class="logo">
+    <div class="header-name">{{ name }}</div>
+</div>
+<!-- HEADER -->
+<!-- <div class="name">{{ name }}</div> -->
+<!-- <div class="contact">{{ email }} | {{ phone }} | {{ location }}</div> -->
+
+<!-- PROFESSIONAL SUMMARY -->
+{% if summary %}
+<div class="section-title">Professional Summary</div>
+<div class="summary">{{ summary }}</div>
+{% endif %}
+
+<!-- TECHNICAL SKILLS -->
+{% if skills %}
+<div class="section-title">Technical Skills:</div>
+
+<table class="skills-table">
+{% for skill in skills %}
+<tr>
+<td class="skills-left">
+{{ skill["category"] }}
+</td>
+<td class="skills-right">
+{{ skill["items"] | join(", ") }}.
+</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+<!-- EXPERIENCE -->
+{% if experience %}
+<div class="section-title">Work Experience</div>
+
+{% for exp in experience %}
+<div class="exp-block">
+
+<div class="exp-header">
+<span>
+{{ exp.role }}
+{% if exp.company %} - <span class="exp-company">{{ exp.company }}</span>{% endif %}
+</span>
+<span>{{ exp.duration }}</span>
+</div>
+
+{% if exp.description %}
+<ul>
+{% for d in exp.description if d %}
+<li>{{ d }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- ACHIEVEMENTS -->
+{% if achievements %}
+<div class="section-title">Achievements</div>
+<ul>
+{% for a in achievements %}
+<li>{{ a }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<!-- PROJECTS -->
+{% if projects %}
+<div class="section-title">Projects</div>
+<ul>
+{% for p in projects %}
+<li>{{ p }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<!-- CERTIFICATIONS -->
+{% if certifications %}
+<div class="section-title">Certifications</div>
+
+<table class="cert-table">
+<tr>
+<td>
+<ul class="cert-list">
+{% for c in certifications %}
+<li>{{ c }}</li>
+{% endfor %}
+</ul>
+</td>
+</tr>
+</table>
+{% endif %}
+
+<!-- EDUCATION -->
+{% if education %}
+<div class="section-title">Education</div>
+
+<table class="education-table">
+{% for e in education %}
+<tr>
+<td class="edu-left">
+<b>
+{% if e.institute %}
+{{ e.institute }}
+{% endif %}
+</b><br>
+
+{% if e.degree %}
+{{ e.degree }}
+{% endif %}
+</td>
+
+<td class="edu-right">
+{% if e.year %}
+{{ e.year }}
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+</body>
+</html>
