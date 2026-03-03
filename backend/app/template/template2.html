@@ -235,13 +235,19 @@ li:before{
 
 <div class="exp-header">
 <span>
-{{ exp.role }}
-{% if exp.company %} - <span class="exp-company">{{ exp.company }}</span>{% endif %}
+<b>{{ exp.role }}</b>
+{% if exp.company %} - {{ exp.company }}{% endif %}
 </span>
-<span>{{ exp.duration }}</span>
+</div>
+
+<div style="font-size:12px; margin-bottom:4px;">
+<b>Project Duration:</b> {{ exp.duration }}{{ exp.duration_calculated }}
 </div>
 
 {% if exp.description %}
+<div style="font-size:12px; font-weight:bold; margin-top:4px;">
+Responsibilities:
+</div>
 <ul>
 {% for d in exp.description if d %}
 <li>{{ d }}</li>

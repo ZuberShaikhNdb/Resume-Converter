@@ -3,7 +3,7 @@ from weasyprint import HTML
 import os
 
 
-def generate_resume(data, template_name="template1.html", output_path="app/uploads/output.pdf"):
+def generate_resume(data, template_name="template2.html", output_path="app/uploads/output.pdf"):
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 

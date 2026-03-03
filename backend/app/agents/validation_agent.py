@@ -1,3 +1,92 @@
+from datetime import datetime
+import re
+
+
+def parse_date(date_str):
+    """
+    Supports:
+    - Aug 2022
+    - January 2022
+    - 07/2022
+    - 7/2022
+    - 21/09/2023
+    """
+
+    date_str = date_str.strip()
+
+    # Format: DD/MM/YYYY
+    if re.match(r"^\d{1,2}/\d{1,2}/\d{4}$", date_str):
+        return datetime.strptime(date_str, "%d/%m/%Y")
+
+    # Format: MM/YYYY
+    if re.match(r"^\d{1,2}/\d{4}$", date_str):
+        return datetime.strptime(date_str, "%m/%Y")
+
+    # Format: Aug 2022
+    try:
+        return datetime.strptime(date_str, "%b %Y")
+    except:
+        pass
+
+    # Format: January 2022
+    try:
+        return datetime.strptime(date_str, "%B %Y")
+    except:
+        pass
+
+    return None
+
+def calculate_duration(duration_str):
+    """
+    Converts:
+    - Aug 2022 – Jan 2024
+    - 07/2022 – 01/2024
+    Into:
+    (1 year 5 months)
+    """
+
+    if not duration_str:
+        return ""
+
+    try:
+        duration_str = duration_str.replace("–", "-").replace("—", "-")
+        parts = [p.strip() for p in duration_str.split("-")]
+
+        if len(parts) != 2:
+            return ""
+
+        start_str, end_str = parts
+
+        start_date = parse_date(start_str)
+
+        # Handle Present / Till Date
+        if re.search(r"present|till|current", end_str, re.IGNORECASE):
+            end_date = datetime.today()
+        else:
+            end_date = parse_date(end_str)
+
+        if not start_date or not end_date:
+            return ""
+
+        total_months = (end_date.year - start_date.year) * 12 + (end_date.month - start_date.month)
+
+        if total_months < 0:
+            return ""
+
+        years = total_months // 12
+        months = total_months % 12
+
+        result = []
+        if years > 0:
+            result.append(f"{years} year{'s' if years > 1 else ''}")
+        if months > 0:
+            result.append(f"{months} month{'s' if months > 1 else ''}")
+
+        return f" ({' '.join(result)})"
+
+    except Exception:
+        return ""
+
 def validation_agent(state):
     """
     Production-grade validation agent for Resume Converter.
@@ -31,7 +120,7 @@ def validation_agent(state):
         return result
 
     # ---------- BASIC FIELDS ----------
-    for field in ["name", "email", "phone", "location", "summary"]:
+    for field in ["name", "email", "phone", "location", "summary", "total_experience"]:
         data[field] = clean(data.get(field))
 
     # ---------- SKILLS ----------
@@ -70,42 +159,76 @@ def validation_agent(state):
 
         # ---------- WEB ----------
         "Frontend": [
-            "react", "angular", "vue", "html", "css", "javascript", "next", "redux"
+            "react", "angular", "vue", "html", "css", "javascript",
+            "next", "redux", "jquery", "ajax", "xhtml", "xml", "json"
         ],
 
         "Backend & APIs": [
-            "node", "spring", "django", "fastapi", "flask", "express", "api", "backend"
+            "node", "spring", "django", "fastapi", "flask",
+            "express", "api", "backend", "rest", "restful", "soap"
         ],
 
-        # ---------- DATA ----------
+    # ---------- DATABASE ----------
         "Databases & Data": [
-            "sql", "mysql", "mongo", "postgres", "oracle", "pandas", "numpy", "database"
+            "sql", "mysql", "mongo", "postgres", "postgresql",
+            "oracle", "mariadb", "pl/sql", "sql server",
+            "dynamodb", "nosql", "cassandra", "hive",
+            "pig", "map reduce", "pandas", "numpy", "database", "Dynamo DB"
         ],
 
         "Visualization & Analytics": [
             "power bi", "tableau", "visualization", "analysis", "monitoring"
         ],
 
-        # ---------- INFRA ----------
+    # ---------- INFRA ----------
         "Cloud": [
-            "aws", "azure", "gcp", "vertex", "cloud"
+            "aws", "azure", "gcp", "vertex", "cloud",
+            "ec2", "lambda", "ecs", "eks", "elastic beanstalk",
+            "s3", "ebs", "efs", "glacier", "rds",
+            "aurora", "elasticache", "redshift", "vpc",
+            "route 53", "cloudfront", "direct connect",
+            "api gateway", "iam", "cognito", "kms",
+            "cloudwatch", "cloudtrail", "config",
+            "sage maker", "rekognition", "athena",
+            "glue", "emr", "kinesis", "iot analytics"
         ],
 
         "DevOps": [
-            "docker", "kubernetes", "ci", "cd", "jenkins", "terraform"
+            "docker", "kubernetes", "ci", "cd",
+            "jenkins", "terraform",
+            "apache maven", "apache ant", "apache spark",
+            "gnu", "winscp", "putty", "tfs"
         ],
 
         # ---------- TOOLS ----------
         "Developer Tools": [
-            "git", "jira", "postman", "vscode", "eclipse", "intellij"
+            "git", "github", "jira", "postman",
+            "vscode", "eclipse", "intellij",
+            "pycharm", "net beans", "ms visio", "notepad++"
         ],
 
-        # ---------- SOFT ----------
+        # ---------- PROGRAMMING ----------
+        "Programming Languages": [
+            "python", "python 2", "python 3",
+            "c", "c++", "java", "j2ee", "r", "unix", "pyspark"
+        ],
+
+    # ---------- OPERATING SYSTEM ----------
+        "Operating Systems": [
+            "linux", "windows"
+        ],
+
+    # ---------- METHODOLOGY ----------
+        "Methodologies": [
+            "agile", "scrum", "waterfall"
+        ],
+
+    # ---------- SOFT ----------
         "Soft Skills": [
-            "communication", "leadership", "teamwork", "adaptability", "collaboration"
+            "communication", "leadership",
+            "teamwork", "adaptability", "collaboration"
         ]
     }
-
     categories = {}
 
     for skill in flat:
@@ -162,10 +285,12 @@ def validation_agent(state):
 
             # remove empty entries
             if role or desc:
+                duration_calc = calculate_duration(duration)
                 cleaned_exp.append({
                     "company": company,
                     "role": role,
                     "duration": duration,
+                    "duration_calculated": duration_calc,
                     "description": desc
                 })
 
@@ -179,6 +304,52 @@ def validation_agent(state):
         }]
 
     data["experience"] = cleaned_exp
+
+        # ---------- AUTO TOTAL EXPERIENCE CALCULATION ----------
+    total_months = 0
+
+    for exp_item in cleaned_exp:
+        duration = exp_item.get("duration", "")
+        months = 0
+
+        if duration:
+            duration = duration.replace("–", "-").replace("—", "-")
+            parts = [p.strip() for p in duration.split("-")]
+
+            if len(parts) == 2:
+                start_date = parse_date(parts[0])
+
+                if re.search(r"present|till|current", parts[1], re.IGNORECASE):
+                    end_date = datetime.today()
+                else:
+                    end_date = parse_date(parts[1])
+
+                if start_date and end_date:
+                    months = (
+                        (end_date.year - start_date.year) * 12
+                        + (end_date.month - start_date.month)
+                    )
+
+        total_months += max(months, 0)
+
+    if not data.get("total_experience") and total_months > 0:
+        years = total_months // 12
+        months = total_months % 12
+
+        parts = []
+        if years > 0:
+            parts.append(f"{years} year{'s' if years > 1 else ''}")
+        if months > 0:
+            parts.append(f"{months} month{'s' if months > 1 else ''}")
+
+        data["total_experience"] = " ".join(parts)
+
+    # Ensure summary starts with experience
+    total_exp = data.get("total_experience", "")
+    summary = data.get("summary", "")
+
+    if total_exp and not summary.lower().startswith(total_exp.lower()):
+        data["summary"] = f"{total_exp} of experience. {summary}"
 
     # ---------- EDUCATION ----------
     edu = data.get("education", [])
@@ -222,6 +393,7 @@ def default_schema():
         "email": "",
         "phone": "",
         "location": "",
+        "total_experience": "",
         "summary": "",
         "skills": [],
         "experience": [{
