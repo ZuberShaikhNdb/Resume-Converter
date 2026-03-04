@@ -123,6 +123,22 @@ def validation_agent(state):
     for field in ["name", "email", "phone", "location", "summary", "total_experience"]:
         data[field] = clean(data.get(field))
 
+    # ---------- OPTIONAL SECTIONS ----------
+    optional_sections = [
+        "certifications",
+        "achievements",
+        "projects",
+        "publications",
+        "domain_expertise"
+    ]
+
+    for section in optional_sections:
+        value = data.get(section, [])
+        if isinstance(value, list):
+            data[section] = [clean(v) for v in value if clean(v)]
+        else:
+            data[section] = []
+
     # ---------- SKILLS ----------
   # ---------- SKILLS ----------
     skills = data.get("skills", [])
@@ -406,5 +422,10 @@ def default_schema():
             "degree": "",
             "institute": "",
             "year": ""
-        }]
+        }],
+        "certifications": [],
+        "achievements": [],
+        "projects": [],
+        "publications": [],
+        "domain_expertise": [],
     }

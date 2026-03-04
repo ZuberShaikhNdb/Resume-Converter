@@ -66,7 +66,12 @@ def extraction_agent(state):
                 "institute": "",
                 "year": ""
             }}
-        ]
+        ],
+        "certifications": [],
+        "achievements": [],
+        "projects": [],
+        "publications": [],
+        "domain_expertise": []
     }}
 
     RULES:

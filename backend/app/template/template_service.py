@@ -3,7 +3,7 @@ from weasyprint import HTML
 import os
 
 
-def generate_resume(data, template_name="template2.html", output_path="app/uploads/output.pdf"):
+def generate_resume(data, template_name="template2.html", output_path=None):
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
@@ -11,7 +11,6 @@ def generate_resume(data, template_name="template2.html", output_path="app/uploa
 
     env = Environment(loader=FileSystemLoader(template_path))
 
-    # 🔥 THIS LINE IS IMPORTANT
     template = env.get_template(template_name)
 
     html_content = template.render(**data)

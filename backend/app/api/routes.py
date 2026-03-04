@@ -1,6 +1,7 @@
 import os
 import shutil
 from fastapi import APIRouter, UploadFile, File
+from typing import List
 
 from app.workflow.graph import build_graph
 
@@ -9,23 +10,36 @@ router = APIRouter()
 graph = build_graph()
 
 UPLOAD_DIR = "app/uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 @router.post("/upload")
-async def upload_resume(file: UploadFile = File(...)):
+async def upload_resume(files: List[UploadFile] = File(...)):
 
-    file_path = os.path.join(UPLOAD_DIR, file.filename)
+    results = []
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    for file in files:
 
-    state = {
-        "file_path": file_path,
-        "raw_text": None,
-        "structured_data": None
+        file_path = os.path.join(UPLOAD_DIR, file.filename)
+
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        state = {
+            "file_path": file_path,
+            "raw_text": None,
+            "structured_data": None
+        }
+
+        result = graph.invoke(state)
+
+        results.append({
+            "file_name": file.filename,
+            "structured_data": result.get("structured_data"),
+            "output_pdf": result.get("output_path")
+        })
+
+    return {
+        "message": "All resumes processed successfully",
+        "results": results
     }
-
-    result = graph.invoke(state)
-
-    return result["structured_data"]
-    return {"pdf": result["output_path"]}
