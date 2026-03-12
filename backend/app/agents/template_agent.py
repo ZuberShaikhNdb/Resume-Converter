@@ -10,8 +10,9 @@ def template_agent(state):
     name_without_ext = os.path.splitext(filename)[0]
 
     output_path = f"app/uploads/{name_without_ext}_converted.pdf"
+   
 
-    path = generate_resume(data, output_path=output_path)
+    path = generate_resume(data, state["template_name"], output_path)
 
     state["output_path"] = path
 

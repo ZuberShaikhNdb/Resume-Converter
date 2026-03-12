@@ -97,13 +97,12 @@ def extraction_agent(state):
         state["structured_data"] = {"error": str(e), "raw": cleaned}
         return state
 
-    # 🔥 VALIDATION + FALLBACK FIX
-    # If total_experience missing → try regex extraction
+
     if not structured_data.get("total_experience"):
         fallback_exp = extract_total_experience_fallback(raw_text)
         structured_data["total_experience"] = fallback_exp
 
-    # If summary does not start with experience → prepend it
+   
     total_exp = structured_data.get("total_experience", "").strip()
     summary = structured_data.get("summary", "").strip()
 

@@ -6,5 +6,5 @@ class ResumeState(TypedDict):
     raw_text: Optional[str]
     structured_data: Optional[Dict[str, Any]]
     validated_data: Optional[Dict[str, Any]]
+    template_name: Optional[str]   # ⭐ ADD THIS
     output_path: Optional[str]
-

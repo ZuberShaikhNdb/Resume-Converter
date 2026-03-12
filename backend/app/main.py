@@ -1,6 +1,6 @@
 import os
 
-print("MAIN KEY:", os.getenv("GOOGLE_API_KEY"))
+#print("MAIN KEY:", os.getenv("GOOGLE_API_KEY"))
 
 from fastapi import FastAPI
 from app.api.routes import router
